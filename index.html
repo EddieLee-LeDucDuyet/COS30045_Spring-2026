@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PowerWise Appliances — Home</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="nav.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="container navbar">
+        <!-- Power logo top-left; click returns home -->
+        <a class="brand" href="index.html" data-nav aria-label="Go to Home">
+          <img src="PowerIcon.png" alt="Power logo" />
+          <span class="title">PowerWise Appliances</span>
+        </a>
+
+        <nav aria-label="Top Navigation">
+          <ul>
+            <li><a href="index.html" data-nav>Home</a></li>
+            <li><a href="televisions.html" data-nav>Televisions</a></li>
+            <li><a href="about.html" data-nav>About Us</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="badge">
+          <span class="dot"></span> Placeholder content — Australian energy
+          consumption
+        </div>
+        <h1>Smarter choices for energy-efficient appliances</h1>
+        <p>
+          This demo site focuses on appliance energy consumption in
+          Australia—how to compare energy ratings, reduce standby power, and
+          estimate running costs using kWh usage and local electricity prices.
+        </p>
+      </section>
+
+      <section class="grid" aria-label="Home content">
+        <article class="card span-6">
+          <h2>Understanding energy use (kWh)</h2>
+          <p>
+            Appliance labels often state annual energy consumption in kWh. Lower
+            kWh typically means lower running cost, but usage patterns matter
+            (hours per day, brightness settings, eco modes, etc.).
+          </p>
+          <ul>
+            <li>Compare like-for-like sizes and features</li>
+            <li>Consider eco modes and auto-brightness</li>
+            <li>Turn off devices fully to reduce standby power</li>
+          </ul>
+        </article>
+
+        <article class="card soft span-6">
+          <h2>Quick cost estimate</h2>
+          <p>
+            Running cost ≈ <strong>kWh × price per kWh</strong>. Example: a TV
+            using 120 kWh/year at $0.30/kWh costs about $36/year.
+          </p>
+          <p>
+            (Numbers are placeholders—replace with your own examples or
+            research.)
+          </p>
+        </article>
+
+        <article class="card span-12">
+          <h2>What you’ll find on this site</h2>
+          <p>
+            Navigate to <strong>Televisions</strong> for sample specs and
+            comparison tips, or <strong>About Us</strong>
+            for a short project description and acknowledgements.
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-row">
+        <small>© <span id="year"></span> Le Duc Duyet</small>
+        <small
+          >GenAI acknowledgement: ChatGPT was used to assist with
+          code/content/design drafting.</small
+        >
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

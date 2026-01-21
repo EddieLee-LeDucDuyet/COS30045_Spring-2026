@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PowerWise Appliances — Televisions</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="nav.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="container navbar">
+        <a class="brand" href="index.html" data-nav aria-label="Go to Home">
+          <img src="PowerIcon.png" alt="Power logo" />
+          <span class="title">PowerWise Appliances</span>
+        </a>
+
+        <nav aria-label="Top Navigation">
+          <ul>
+            <li><a href="index.html" data-nav>Home</a></li>
+            <li><a href="televisions.html" data-nav>Televisions</a></li>
+            <li><a href="about.html" data-nav>About Us</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="badge">
+          <span class="dot"></span> Televisions — energy consumption
+          placeholders
+        </div>
+        <h1>Television energy tips (AU market)</h1>
+        <p>
+          Bigger screens and higher brightness can increase energy use. Compare
+          annual kWh, enable eco features, and avoid unnecessary standby
+          consumption.
+        </p>
+      </section>
+
+      <section class="grid" aria-label="Television content">
+        <article class="card span-6">
+          <h2>What affects a TV’s energy use?</h2>
+          <ul>
+            <li>Screen size and panel technology</li>
+            <li>Brightness/HDR settings</li>
+            <li>Usage hours per day</li>
+            <li>Standby and “always-on” features</li>
+          </ul>
+        </article>
+
+        <article class="card soft span-6">
+          <h2>Ways to reduce consumption</h2>
+          <ul>
+            <li>Use “Eco” / “Energy Saving” mode</li>
+            <li>Lower backlight/brightness</li>
+            <li>Enable auto power-off timers</li>
+            <li>Switch off at the wall when not needed</li>
+          </ul>
+        </article>
+
+        <article class="card span-12">
+          <h2>Example comparison table (placeholder)</h2>
+          <p>Replace these with your own research or provided lab data.</p>
+          <ul>
+            <li>55" LED: ~110–140 kWh/year (example only)</li>
+            <li>65" LED: ~140–190 kWh/year (example only)</li>
+            <li>
+              OLED (varies): depends heavily on content/brightness (example
+              only)
+            </li>
+          </ul>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-row">
+        <small>© <span id="year"></span> Le Duc Duyet</small>
+        <small
+          >GenAI acknowledgement: ChatGPT was used to assist with
+          code/content/design drafting.</small
+        >
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

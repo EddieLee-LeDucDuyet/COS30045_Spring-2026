@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PowerWise Appliances — About Us</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="nav.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="container navbar">
+        <a class="brand" href="index.html" data-nav aria-label="Go to Home">
+          <img src="PowerIcon.png" alt="Power logo" />
+          <span class="title">PowerWise Appliances</span>
+        </a>
+
+        <nav aria-label="Top Navigation">
+          <ul>
+            <li><a href="index.html" data-nav>Home</a></li>
+            <li><a href="televisions.html" data-nav>Televisions</a></li>
+            <li><a href="about.html" data-nav>About Us</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="badge"><span class="dot"></span> About Us</div>
+        <h1>About this demo website</h1>
+        <p>
+          A simple 3-page site demonstrating JavaScript-driven navigation and
+          styling aligned with the provided power logo. Content focuses on
+          appliance energy consumption in the Australian market (placeholder
+          text).
+        </p>
+      </section>
+
+      <section class="grid" aria-label="About content">
+        <article class="card span-6">
+          <h2>Purpose</h2>
+          <p>
+            Demonstrate a top navigation bar that swaps between three pages
+            using JavaScript, highlights the current page, and provides hover
+            feedback.
+          </p>
+        </article>
+
+        <article class="card soft span-6">
+          <h2>Next steps</h2>
+          <ul>
+            <li>
+              Add real AU energy label references and citations (if required)
+            </li>
+            <li>
+              Create a calculator for running costs based on kWh and tariff
+            </li>
+            <li>Add responsive images and product cards for TVs</li>
+          </ul>
+        </article>
+
+        <article class="card span-12">
+          <h2>Acknowledgement</h2>
+          <p>
+            GenAI acknowledgement: ChatGPT was used to assist with code/content
+            drafting. Final review and edits by Le Duc Duyet.
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-row">
+        <small>© <span id="year"></span> Le Duc Duyet</small>
+        <small
+          >GenAI acknowledgement: ChatGPT was used to assist with
+          code/content/design drafting.</small
+        >
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
