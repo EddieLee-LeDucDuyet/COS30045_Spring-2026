@@ -1,0 +1,302 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Data Review (D3)</title>
+    <style>
+      :root {
+        --bg: #f4f1ec;
+        --ink: #1f1f1f;
+        --muted: #6a6460;
+        --accent: #c66b3d;
+        --accent-2: #2f6b5f;
+        --card: #fffaf2;
+        --line: #ded6cc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at 10% 10%, #fff6e8 0, #f4f1ec 55%, #eae3d7 100%);
+        padding: 32px;
+      }
+      h1 {
+        margin: 0 0 8px 0;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .sub {
+        margin: 0 0 24px 0;
+        color: var(--muted);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        padding: 16px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .card h3 {
+        margin: 0 0 6px 0;
+        font-size: 14px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .card .value {
+        font-size: 28px;
+        font-weight: 600;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      select {
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #fff;
+        font-size: 14px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr);
+        gap: 20px;
+      }
+      .panel {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        padding: 16px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      th,
+      td {
+        padding: 8px 6px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+      }
+      th {
+        cursor: pointer;
+        color: var(--accent-2);
+        font-weight: 600;
+      }
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      svg {
+        width: 100%;
+        height: 260px;
+      }
+      .bar {
+        fill: var(--accent);
+      }
+      .bar:hover {
+        fill: #a9542c;
+      }
+      .axis text {
+        fill: var(--muted);
+        font-size: 12px;
+      }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Simple Data Review</h1>
+    <p class="sub">Quick look at a small dataset using D3.js: summary, chart, and sortable table.</p>
+
+    <div class="grid" id="summary"></div>
+
+    <div class="controls">
+      <label for="category">Category filter:</label>
+      <select id="category"></select>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <h2>Scores by Item</h2>
+        <svg id="chart"></svg>
+        <div class="hint">Hover a bar to see the exact score.</div>
+      </div>
+      <div class="panel">
+        <h2>Data Table</h2>
+        <table id="table"></table>
+        <div class="hint">Click a column header to sort.</div>
+      </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+      const data = [
+        { item: "Alpha", category: "North", score: 82, date: "2026-01-12" },
+        { item: "Bravo", category: "South", score: 68, date: "2026-01-20" },
+        { item: "Charlie", category: "East", score: 91, date: "2026-01-25" },
+        { item: "Delta", category: "West", score: 74, date: "2026-01-28" },
+        { item: "Echo", category: "North", score: 88, date: "2026-02-01" },
+        { item: "Foxtrot", category: "South", score: 77, date: "2026-02-02" },
+        { item: "Golf", category: "East", score: 63, date: "2026-02-03" },
+        { item: "Hotel", category: "West", score: 85, date: "2026-02-04" }
+      ];
+
+      const categories = ["All", ...new Set(data.map((d) => d.category))];
+      const categorySelect = d3.select("#category");
+      categorySelect
+        .selectAll("option")
+        .data(categories)
+        .enter()
+        .append("option")
+        .attr("value", (d) => d)
+        .text((d) => d);
+
+      let currentSort = { key: "score", asc: false };
+
+      function summarize(rows) {
+        const scores = rows.map((d) => d.score);
+        const avg = d3.mean(scores);
+        const min = d3.min(scores);
+        const max = d3.max(scores);
+        const summary = [
+          { label: "Items", value: rows.length },
+          { label: "Average Score", value: avg ? avg.toFixed(1) : "–" },
+          { label: "Lowest Score", value: min ?? "–" },
+          { label: "Highest Score", value: max ?? "–" }
+        ];
+
+        const cards = d3.select("#summary").selectAll(".card").data(summary);
+        const enter = cards.enter().append("div").attr("class", "card");
+        enter.append("h3");
+        enter.append("div").attr("class", "value");
+
+        const merged = enter.merge(cards);
+        merged.select("h3").text((d) => d.label);
+        merged.select(".value").text((d) => d.value);
+
+        cards.exit().remove();
+      }
+
+      function drawChart(rows) {
+        const svg = d3.select("#chart");
+        const width = svg.node().clientWidth;
+        const height = svg.node().clientHeight;
+        const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+        const innerW = width - margin.left - margin.right;
+        const innerH = height - margin.top - margin.bottom;
+
+        svg.selectAll("*").remove();
+        const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const x = d3
+          .scaleBand()
+          .domain(rows.map((d) => d.item))
+          .range([0, innerW])
+          .padding(0.2);
+
+        const y = d3
+          .scaleLinear()
+          .domain([0, d3.max(rows, (d) => d.score) || 0])
+          .nice()
+          .range([innerH, 0]);
+
+        g.append("g")
+          .attr("class", "axis")
+          .attr("transform", `translate(0,${innerH})`)
+          .call(d3.axisBottom(x));
+
+        g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+
+        g.selectAll("rect")
+          .data(rows)
+          .enter()
+          .append("rect")
+          .attr("class", "bar")
+          .attr("x", (d) => x(d.item))
+          .attr("width", x.bandwidth())
+          .attr("y", (d) => y(d.score))
+          .attr("height", (d) => innerH - y(d.score))
+          .append("title")
+          .text((d) => `${d.item}: ${d.score}`);
+      }
+
+      function drawTable(rows) {
+        const table = d3.select("#table");
+        table.selectAll("*").remove();
+
+        const columns = ["item", "category", "score", "date"];
+        const header = table.append("thead").append("tr");
+        header
+          .selectAll("th")
+          .data(columns)
+          .enter()
+          .append("th")
+          .text((d) => d.toUpperCase())
+          .on("click", (event, key) => {
+            if (currentSort.key === key) {
+              currentSort.asc = !currentSort.asc;
+            } else {
+              currentSort.key = key;
+              currentSort.asc = true;
+            }
+            render();
+          });
+
+        const body = table.append("tbody");
+        body
+          .selectAll("tr")
+          .data(rows)
+          .enter()
+          .append("tr")
+          .selectAll("td")
+          .data((d) => columns.map((key) => d[key]))
+          .enter()
+          .append("td")
+          .text((d) => d);
+      }
+
+      function getFiltered() {
+        const category = categorySelect.property("value");
+        return category === "All" ? data : data.filter((d) => d.category === category);
+      }
+
+      function render() {
+        const rows = getFiltered().slice();
+        rows.sort((a, b) => {
+          const key = currentSort.key;
+          const dir = currentSort.asc ? 1 : -1;
+          if (key === "score") return (a[key] - b[key]) * dir;
+          return a[key].toString().localeCompare(b[key].toString()) * dir;
+        });
+
+        summarize(rows);
+        drawChart(rows);
+        drawTable(rows);
+      }
+
+      categorySelect.on("change", render);
+      window.addEventListener("resize", render);
+      render();
+    </script>
+  </body>
+</html>
