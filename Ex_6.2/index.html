@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TV Energy Consumption</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/chart.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <p class="eyebrow">COS30045 · Exercise 6.1 &amp; 6.2</p>
+        <h1>TV Energy <span>Consumption</span></h1>
+        <p class="subtitle">
+          Jan 2025 dataset — histogram &amp; scatterplot with interactive
+          filters and tooltips
+        </p>
+      </header>
+
+      <!-- ── Exercise 6.1 — Histogram ───────────────────────────────────────── -->
+      <section class="section-label">
+        Exercise 6.1 — Histogram: Filtering
+      </section>
+
+      <div class="filter-panel">
+        <p class="filter-label">Screen Technology</p>
+        <div class="filter-group" id="filters-tech"></div>
+
+        <p class="filter-label" style="margin-top: 14px">
+          Screen Size (inches)
+        </p>
+        <div class="filter-group" id="filters-size"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title-row">
+          <div>
+            <div class="chart-title">Energy Consumption Distribution</div>
+            <div class="chart-subtitle" id="chart-subtitle">Loading data…</div>
+          </div>
+          <div class="stat-badge" id="count-badge">— TVs</div>
+        </div>
+        <div id="chart">
+          <div class="state-msg">
+            <div class="spinner"></div>
+            Loading dataset…
+          </div>
+        </div>
+        <div class="tooltip" id="tooltip"></div>
+      </div>
+
+      <!-- ── Exercise 6.2 — Scatterplot ─────────────────────────────────────── -->
+      <section class="section-label" style="margin-top: 40px">
+        Exercise 6.2 — Scatterplot: Tooltips
+      </section>
+
+      <div class="chart-card">
+        <div class="chart-title-row">
+          <div>
+            <div class="chart-title">Energy Consumption vs Star Rating</div>
+            <div class="chart-subtitle">
+              Colour = screen technology · Hover circle for screen size
+            </div>
+          </div>
+          <div class="stat-badge" id="scatter-badge">— TVs</div>
+        </div>
+        <div id="scatter">
+          <div class="state-msg">
+            <div class="spinner"></div>
+            Loading dataset…
+          </div>
+        </div>
+      </div>
+
+      <footer-note
+        >Exercise 6.1: click filters to explore · Exercise 6.2: hover circles
+        for tooltip</footer-note
+      >
+    </div>
+
+    <!-- JS load order matters: shared-constants first, then charts, then interactions, then main -->
+    <script src="js/shared-constants.js"></script>
+    <script src="js/histogram.js"></script>
+    <script src="js/scatterplot.js"></script>
+    <script src="js/interactions.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
