@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TV Energy Consumption Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Australian Energy Data</p>
+        <h1 class="hero-title">TV Power<br /><em>Consumption</em></h1>
+        <p class="hero-subtitle">
+          Exploring energy use, efficiency ratings, screen technologies, and
+          wholesale electricity prices across the Australian market.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num" id="stat-brands">—</span
+          ><span class="stat-label">Brands</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="stat-models">—</span
+          ><span class="stat-label">Models Shown</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">3</span
+          ><span class="stat-label">Screen Types</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">27</span
+          ><span class="stat-label">Years of Prices</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Global Filter Panel -->
+    <div class="filter-bar" id="filter-bar">
+      <div class="filter-bar-inner">
+        <div class="filter-group">
+          <label class="filter-label">Screen Technology</label>
+          <div class="toggle-group" id="filter-tech">
+            <button class="toggle active" data-value="LCD">LCD</button>
+            <button class="toggle active" data-value="LED">LED</button>
+            <button class="toggle active" data-value="OLED">OLED</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Screen Size (inches)</label>
+          <div class="range-group">
+            <span class="range-val" id="size-min-label">16&Prime;</span>
+            <input
+              type="range"
+              id="size-min"
+              min="16"
+              max="114"
+              value="16"
+              step="1"
+            />
+            <span class="range-sep">to</span>
+            <input
+              type="range"
+              id="size-max"
+              min="16"
+              max="114"
+              value="114"
+              step="1"
+            />
+            <span class="range-val" id="size-max-label">114&Prime;</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Star Rating</label>
+          <div class="range-group">
+            <span class="range-val" id="star-min-label">1&#9733;</span>
+            <input
+              type="range"
+              id="star-min"
+              min="1"
+              max="8"
+              value="1"
+              step="0.5"
+            />
+            <span class="range-sep">to</span>
+            <input
+              type="range"
+              id="star-max"
+              min="1"
+              max="8"
+              value="8"
+              step="0.5"
+            />
+            <span class="range-val" id="star-max-label">8&#9733;</span>
+          </div>
+        </div>
+
+        <div class="filter-group filter-group--brand">
+          <label class="filter-label"
+            >Brand <span class="filter-count" id="brand-count"></span
+          ></label>
+          <input
+            type="text"
+            id="brand-search"
+            class="brand-search"
+            placeholder="Search brands…"
+          />
+          <div class="brand-list" id="brand-list"></div>
+        </div>
+
+        <div class="filter-group filter-group--year">
+          <label class="filter-label">Price Year Range</label>
+          <div class="range-group">
+            <span class="range-val" id="year-min-label">1998</span>
+            <input
+              type="range"
+              id="year-min"
+              min="1998"
+              max="2024"
+              value="1998"
+              step="1"
+            />
+            <span class="range-sep">to</span>
+            <input
+              type="range"
+              id="year-max"
+              min="1998"
+              max="2024"
+              value="2024"
+              step="1"
+            />
+            <span class="range-val" id="year-max-label">2024</span>
+          </div>
+        </div>
+
+        <button class="reset-btn" id="reset-filters">&#8635; Reset All</button>
+      </div>
+    </div>
+
+    <main class="dashboard">
+      <section class="card card--wide" id="scatter-section">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">
+              Energy Consumption vs Efficiency Star Rating
+            </h2>
+            <p class="card-desc">
+              Each point is a brand–size–technology combination. Circle size
+              encodes screen size. Use the filters above to isolate
+              technologies, size ranges, star ratings, or specific brands.
+            </p>
+          </div>
+          <span class="chart-meta" id="scatter-meta"></span>
+        </div>
+        <div id="scatter-chart" class="chart-container"></div>
+      </section>
+
+      <section class="card card--wide" id="line-section">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Australian Wholesale Electricity Prices</h2>
+            <p class="card-desc">
+              Average spot price (excl. Tasmania &amp; Snowy) in $ per megawatt
+              hour. Use the year range filter to zoom into any period. The
+              2021–22 energy crisis is clearly visible.
+            </p>
+          </div>
+          <span class="chart-meta" id="line-meta"></span>
+        </div>
+        <div id="line-chart" class="chart-container"></div>
+      </section>
+
+      <div class="card-row">
+        <section class="card" id="bar-section">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Mean Energy by Screen Technology</h2>
+              <p class="card-desc">
+                Average annual kWh/year grouped by screen technology, computed
+                live from the currently filtered dataset.
+              </p>
+            </div>
+          </div>
+          <div id="bar-chart" class="chart-container"></div>
+        </section>
+
+        <section class="card" id="pie-section">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">
+                Model Distribution by Screen Technology
+              </h2>
+              <p class="card-desc">
+                Share of TV models (weighted by count) for the current filter
+                selection. Updates live as you filter.
+              </p>
+            </div>
+          </div>
+          <div id="pie-chart" class="chart-container"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Data: Australian Renewable Energy Agency &amp; Australian Energy
+        Regulator &nbsp;&middot;&nbsp; Built with D3.js v7
+      </p>
+    </footer>
+
+    <script>
+      // Shared state object — all chart modules subscribe to this
+      window.DASH = {
+        tvData: [],
+        priceData: [],
+        filters: {
+          techs: new Set(["LCD", "LED", "OLED"]),
+          sizeMin: 16,
+          sizeMax: 114,
+          starMin: 1,
+          starMax: 8,
+          brands: null, // null = all brands selected
+          yearMin: 1998,
+          yearMax: 2024,
+        },
+        _listeners: [],
+        subscribe(fn) {
+          this._listeners.push(fn);
+        },
+        dispatch() {
+          const f = this.filters;
+          const tv = this.tvData.filter(
+            (d) =>
+              f.techs.has(d.tech) &&
+              d.size >= f.sizeMin &&
+              d.size <= f.sizeMax &&
+              d.stars >= f.starMin &&
+              d.stars <= f.starMax &&
+              (f.brands === null || f.brands.has(d.brand)),
+          );
+          const prices = this.priceData.filter(
+            (d) => d.year >= f.yearMin && d.year <= f.yearMax,
+          );
+          const brandCount = new Set(tv.map((d) => d.brand)).size;
+          document.getElementById("stat-brands").textContent = brandCount;
+          document.getElementById("stat-models").textContent = tv.length;
+          this._listeners.forEach((fn) => fn(tv, prices));
+        },
+      };
+    </script>
+
+    <script src="js/filters.js"></script>
+    <script src="js/scatter.js"></script>
+    <script src="js/line.js"></script>
+    <script src="js/bar.js"></script>
+    <script src="js/pie.js"></script>
+  </body>
+</html>

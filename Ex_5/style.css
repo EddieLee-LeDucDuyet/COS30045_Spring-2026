@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f0f0f0;
+}
+
+header {
+  background: #4caf50;
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.chart {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
