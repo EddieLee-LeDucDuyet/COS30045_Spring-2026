@@ -7,10 +7,13 @@
 
 (function () {
   const CONTAINER = "#line-chart";
-  const MARGIN = { top: 20, right: 50, bottom: 52, left: 68 };
+  const MARGIN = { top: 20, right: 50, bottom: 70, left: 68 };
 
   const STATE_COLORS = { QLD:"#b5956a", NSW:"#8aab8a", VIC:"#7a9ec0", SA:"#c09f7a", TAS:"#b08aaa" };
   const STATE_KEYS   = ["QLD","NSW","VIC","SA","TAS"];
+
+  // Which state lines are currently visible — persists across redraws
+  const activeStates = new Set(STATE_KEYS);
 
   const container = document.querySelector(CONTAINER);
   let currentPrices = [];
@@ -75,13 +78,17 @@
 
     const clip = g.append("g").attr("clip-path","url(#line-clip)");
 
-    // State lines (faint)
+    // State lines — visible by default, toggled by the legend buttons
+    const statePaths = {};
     STATE_KEYS.forEach(k => {
       const lineGen = d3.line().x(d=>x(d.year)).y(d=>y(d[k])).defined(d=>d[k]!=null);
-      clip.append("path").datum(data)
-        .attr("fill","none").attr("stroke",STATE_COLORS[k])
-        .attr("stroke-width",1).attr("opacity",.3)
-        .attr("d",lineGen);
+      statePaths[k] = clip.append("path").datum(data)
+        .attr("class", `state-line state-line-${k}`)
+        .attr("fill","none")
+        .attr("stroke", STATE_COLORS[k])
+        .attr("stroke-width", 1.8)
+        .attr("opacity", activeStates.has(k) ? 0.75 : 0)
+        .attr("d", lineGen);
     });
 
     // Average area + line
@@ -92,7 +99,7 @@
     clip.append("path").datum(data)
       .attr("fill","none").attr("stroke","var(--accent)").attr("stroke-width",2.5).attr("d",lineGen);
 
-    // Hover dots
+    // Hover dots on average line
     const tooltip = window._dashTooltip;
     clip.selectAll(".dot-line").data(data).join("circle")
       .attr("class","dot-line")
@@ -113,23 +120,58 @@
     if (last) {
       svg.append("text").attr("x",MARGIN.left+x(last.year)+6).attr("y",MARGIN.top+y(last.avg))
         .attr("fill","var(--accent)").attr("font-size","11px").attr("dominant-baseline","middle")
-        .text("Average");
+        .text("Avg");
     }
 
-    // State colour legend — small strip top-right
-    const lx0 = MARGIN.left + iW - STATE_KEYS.length*28 + 4;
-    STATE_KEYS.forEach((k,i) => {
-      svg.append("line")
-        .attr("x1",lx0+i*28).attr("x2",lx0+i*28+18)
-        .attr("y1",MARGIN.top+8).attr("y2",MARGIN.top+8)
-        .attr("stroke",STATE_COLORS[k]).attr("stroke-width",1.5).attr("opacity",.6);
-      svg.append("text")
-        .attr("x",lx0+i*28+9).attr("y",MARGIN.top+20)
-        .attr("text-anchor","middle").attr("font-size","9px").attr("fill","var(--ink-muted)")
+    // Clickable state legend — click to show/hide each state line
+    const legendGroup = svg.append("g")
+      .attr("transform", `translate(${MARGIN.left}, ${MARGIN.top + iH + 34})`);
+
+    // "Average" legend item (always on)
+    legendGroup.append("line")
+      .attr("x1",0).attr("x2",20).attr("y1",8).attr("y2",8)
+      .attr("stroke","var(--accent)").attr("stroke-width",2.5);
+    legendGroup.append("text")
+      .attr("x",24).attr("y",12).attr("font-size","11px").attr("fill","var(--ink)")
+      .text("Average");
+
+    // State legend items — clickable toggles
+    STATE_KEYS.forEach((k, i) => {
+      const lx = 90 + i * 52;
+      const itemG = legendGroup.append("g")
+        .attr("transform", `translate(${lx},0)`)
+        .style("cursor","pointer")
+        .on("click", function() {
+          if (activeStates.has(k)) {
+            activeStates.delete(k);
+          } else {
+            activeStates.add(k);
+          }
+          const isOn = activeStates.has(k);
+          // Toggle opacity on the path
+          statePaths[k].attr("opacity", isOn ? 0.75 : 0);
+          // Toggle visual style of this legend item
+          d3.select(this).select("line").attr("opacity", isOn ? 1 : 0.25);
+          d3.select(this).select("text").attr("opacity", isOn ? 1 : 0.35);
+        });
+
+      itemG.append("line")
+        .attr("x1",0).attr("x2",20).attr("y1",8).attr("y2",8)
+        .attr("stroke", STATE_COLORS[k]).attr("stroke-width",2)
+        .attr("opacity", activeStates.has(k) ? 1 : 0.25);
+      itemG.append("text")
+        .attr("x",24).attr("y",12).attr("font-size","11px")
+        .attr("fill", STATE_COLORS[k])
+        .attr("opacity", activeStates.has(k) ? 1 : 0.35)
         .text(k);
     });
 
-    // Year range meta
+    legendGroup.append("text")
+      .attr("x", 90 + STATE_KEYS.length*52 + 8).attr("y",12)
+      .attr("font-size","10px").attr("fill","var(--ink-muted)").attr("font-style","italic")
+      .text("(click to toggle)");
+
+    // Year range meta label
     const lo = data[0]?.year, hi = data[data.length-1]?.year;
     document.getElementById("line-meta").textContent =
       lo && hi ? `${lo}–${hi}` : "";

@@ -1,0 +1,188 @@
+/* ── base.css — page layout, typography, filter buttons ── */
+:root {
+  --bg: #0d0f14;
+  --surface: #161a24;
+  --surface2: #1e2332;
+  --border: #2a3148;
+  --text: #e8eaf2;
+  --text-muted: #6b748f;
+  --accent: #4df0c0;
+  --accent-dim: rgba(77, 240, 192, 0.12);
+  --lcd: #4da6ff;
+  --led: #4df0c0;
+  --oled: #c77dff;
+  --all: #ffd166;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", "Segoe UI", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px 60px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 760px;
+}
+
+/* ── Header ── */
+header {
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 span {
+  color: var(--accent);
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+/* ── Filter panel ── */
+.filter-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.filter-label {
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── Buttons ── */
+.btn {
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  outline: none;
+  user-select: none;
+}
+
+.btn:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.btn[data-type="all"].active {
+  background: rgba(255, 209, 102, 0.15);
+  border-color: var(--all);
+  color: var(--all);
+}
+.btn[data-type="LCD"].active {
+  background: rgba(77, 166, 255, 0.15);
+  border-color: var(--lcd);
+  color: var(--lcd);
+}
+.btn[data-type="LED"].active {
+  background: rgba(77, 240, 192, 0.15);
+  border-color: var(--led);
+  color: var(--led);
+}
+.btn[data-type="OLED"].active {
+  background: rgba(199, 125, 255, 0.15);
+  border-color: var(--oled);
+  color: var(--oled);
+}
+.btn[data-size].active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Misc ── */
+footer-note {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 18px;
+  font-family: monospace;
+}
+
+.state-msg {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 14px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
