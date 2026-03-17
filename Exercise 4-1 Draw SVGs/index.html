@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SVG House</title>
+  </head>
+  <body>
+    <h1>My SVG House</h1>
+
+    <svg width="500" height="400" style="border: 1px solid black">
+      <!-- Sky -->
+      <rect x="0" y="0" width="500" height="200" fill="lightblue" />
+
+      <!-- Grass -->
+      <rect x="0" y="200" width="500" height="200" fill="lightgreen" />
+
+      <!-- House body -->
+      <rect
+        x="150"
+        y="180"
+        width="200"
+        height="150"
+        fill="beige"
+        stroke="black"
+      />
+
+      <!-- Roof -->
+      <polygon points="150,180 250,100 350,180" fill="brown" />
+
+      <!-- Door -->
+      <rect x="230" y="250" width="40" height="80" fill="saddlebrown" />
+
+      <!-- Window 1 -->
+      <rect
+        x="170"
+        y="210"
+        width="40"
+        height="40"
+        fill="white"
+        stroke="black"
+      />
+
+      <!-- Window 2 -->
+      <rect
+        x="290"
+        y="210"
+        width="40"
+        height="40"
+        fill="white"
+        stroke="black"
+      />
+
+      <!-- Sun -->
+      <circle cx="450" cy="50" r="30" fill="yellow" />
+
+      <!-- Path -->
+      <ellipse cx="250" cy="350" rx="60" ry="20" fill="gray" />
+
+      <!-- Text -->
+      <text x="180" y="50" font-size="20" fill="black">My House</text>
+    </svg>
+  </body>
+</html>
