@@ -1,7 +1,7 @@
 # Verify on every push/PR to main; deploy to Pages only on push to main (or manual).
 # Settings → Pages → Source: GitHub Actions
 
-name: CI and Pages
+name: CI and CD
 
 on:
   push:
